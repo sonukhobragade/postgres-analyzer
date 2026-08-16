@@ -1,0 +1,63 @@
+.tooltipContainer {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltipButton {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  cursor: help;
+}
+
+.tooltipContent {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 100;
+  background-color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  width: 250px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  margin-top: 5px;
+}
+
+.tooltipContainer:hover .tooltipContent,
+.active .tooltipContent {
+  opacity: 1;
+  visibility: visible;
+}
+
+.infoIcon {
+  color: #6b7280;
+  cursor: help;
+  font-size: 0.75rem;
+  margin-left: 4px;
+}
+
+.wideTooltip {
+  width: 300px;
+}
+
+.warningTag {
+  display: flex;
+  align-items: center;
+}
+
+.warningIcon {
+  margin-left: 8px;
+  color: #d97706;
+}
+
+.highWarning {
+  margin-left: 8px;
+  color: #dc2626;
+}

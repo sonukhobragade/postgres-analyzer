@@ -1,0 +1,28 @@
+# A throwaway PostgreSQL for `node scripts/verify-queries.js`.
+#
+# Port 55432 rather than 5432 so it cannot collide with a real server you have
+# running locally — pointing a verification script that creates and drops tables
+# at the wrong database would be an unpleasant way to find that out.
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-analyzer-verify
+    environment:
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: analyzer_test
+    ports:
+      - "55432:5432"
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    tmpfs:
+      # Nothing survives the container. This holds test fixtures only.
+      - /var/lib/postgresql/data
