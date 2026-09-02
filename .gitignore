@@ -44,5 +44,5 @@ Thumbs.db
 __pycache__/
 *.pyc
 
-# Local Claude Code MCP server config; may contain API tokens
+# Local editor/assistant config; may contain API tokens
 .mcp.json
