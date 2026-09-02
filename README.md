@@ -10,6 +10,32 @@ Every query it runs targets `pg_catalog` and the `pg_stat_*` views. It never
 reads your application tables, and it never writes anything. Point it at a
 read-only role and it still works fully.
 
+## It is checked against a real server
+
+Unit tests cannot tell you a query returns the right answer -- valid SQL can
+pass every test and still be wrong. So the queries run against a live
+PostgreSQL with a deliberately awkward fixture: a table named `"Weird.Name"`,
+an index nothing uses, a table with no primary key, and real sessions made to
+block each other.
+
+```bash
+docker compose -f docker-compose.test.yml up -d
+node server/scripts/verify-queries.js
+```
+
+```
+--- blocking detection, with real locks ------------------------------
+  179 blocks 180  (ROOT CAUSE, waited 1.5s)
+  180 blocks 181  (also blocked, waited 1.5s)
+  PASS  blocking is detected at all
+  PASS  exactly one session is identified as the root cause
+  PASS  and it is the session actually holding the lock
+
+10 queries executed, 0 checks failed
+```
+
+[Full transcript below](#verifying-it-against-a-real-database).
+
 ## How it works
 
 ```mermaid
@@ -162,7 +188,7 @@ PostgreSQL 16.15 at 127.0.0.1:55432
   PASS  databaseInfo             1 rows
   PASS  cacheHitRatio            1 rows
   PASS  tableStats               3 rows
-  PASS  slowQueries              2 rows
+  PASS  slowQueries              0 rows
   PASS  partitioningInfo         0 rows
   PASS  blockingQueries          0 rows
   PASS  indexUsage               3 rows
@@ -188,6 +214,10 @@ PostgreSQL 16.15 at 127.0.0.1:55432
 
 10 queries executed, 0 checks failed
 ```
+
+Session ids and some row counts differ per run -- `slowQueries` in particular
+depends on what `pg_stat_statements` has observed. The PASS lines are the
+assertions; the counts beside them are incidental.
 
 Every figure above comes from a throwaway container full of generated rows.
 None of it is production data, and the numbers describe the fixture rather than
