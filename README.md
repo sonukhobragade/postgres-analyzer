@@ -10,6 +10,14 @@ Every query it runs targets `pg_catalog` and the `pg_stat_*` views. It never
 reads your application tables, and it never writes anything. Point it at a
 read-only role and it still works fully.
 
+## Why
+
+`pg_stat_statements` and friends already contain the answer to "why is this
+database slow". The problem is that reading them means remembering a dozen
+catalogue queries and doing the ratio maths by hand, per database, every time.
+This runs the catalogue queries, does the arithmetic, and ranks the findings so
+the worst thing is at the top.
+
 ## It is checked against a real server
 
 Unit tests cannot tell you a query returns the right answer -- valid SQL can
@@ -59,14 +67,6 @@ flowchart LR
 
 Read-only by construction: every statement targets `pg_catalog` or a
 `pg_stat_*` view, so a read-only role loses no functionality.
-
-## Why
-
-`pg_stat_statements` and friends already contain the answer to "why is this
-database slow". The problem is that reading them means remembering a dozen
-catalogue queries and doing the ratio maths by hand, per database, every time.
-This runs the catalogue queries, does the arithmetic, and ranks the findings so
-the worst thing is at the top.
 
 ## Running it
 
